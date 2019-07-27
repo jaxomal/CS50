@@ -6,7 +6,9 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <!-- Fontawesome CDN -->
         <script src="https://kit.fontawesome.com/e554fb0196.js"></script>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/loginstyle.css') }}">
+        {% block style %}
+        {% endblock %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/error.css') }}">
     </head>
     <body>
         <div class="container">
