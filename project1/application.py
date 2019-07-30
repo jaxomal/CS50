@@ -32,9 +32,9 @@ def index():
 @app.route("/bookstore")
 def bookstore():
     if not session.get("in"):
-        render_template("error.html", message="You are not signed in")
+        return render_template("error.html", message="You are not signed in")
     else:
-        render_template("bookstore.html", message="Logged in")
+        return render_template("bookstore.html")
 
 @app.route("/signin")
 def signin():
@@ -78,11 +78,24 @@ def register():
     db.commit()
     return render_template("success.html", message="Your id is " + str(id))
 
-@app.route("/logout")
+@app.route("/logout", methods=["GET"])
 def logout():
     """Log out of your account."""
     session["in"] = False
     session["id"] = None
+    return signin()
+
+@app.route("/search", methods=["GET", "POST"])
+def search():
+    # Look through the database for matching ISBN, title, or author return all results
+    search_res = request.form.get("search")
+    like_res = "'%" + search_res + "%'"
+    res = db.execute("SELECT * FROM books WHERE isbn LIKE " + like_res + " OR title LIKE" +  like_res + " OR author LIKE" + like_res)
+    return render_template("results.html", books=res)
+
+@app.route("/book/<string:isbn>")
+def book(isbn):
+    return;
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

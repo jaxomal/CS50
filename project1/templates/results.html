@@ -16,12 +16,12 @@ Bookstore
 
 {% block body %}
 	<h1>EDGEAIO BOOKSTORE</h1>
-	<div class="input-group form-group">
-		<div class="input-group-prepend">
-			<span class="input-group-text"><i class="fas fa-search"></i></span>
-		</div>
-		<form action="{{ url_for('search') }}" method="POST" class="form-inline my-2 my-lg-0">
-			<input class="form-control mr-sm-2" name="search" type="search" placeholder="Search">
-    	</form>
+	<div class="links">
+		<ul>
+			{% for book in books %}
+	        	<li><a href="{{'/book' ~ '/' ~ book.isbn }}">{{ book.title }} by
+	        	{{ book.author }} || ISBN: {{book.isbn}} </a></li>
+	    	{% endfor %}
+    	</ul>
 	</div>
 {% endblock %}

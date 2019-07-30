@@ -11,6 +11,11 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/error.css') }}">
     </head>
     <body>
+        <nav class="navbar navbar-dark bg-primary">
+             <a class="navbar-brand"><img src="{{ url_for('static', filename='edge.png')}}" height="30" width="30"></a>
+              {% block logout %}
+              {% endblock %}
+        </nav>
         <div class="container">
             {% block body %}
             {% endblock %}
