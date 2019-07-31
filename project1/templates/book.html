@@ -15,24 +15,61 @@
 {% endblock %}
 
 {% block body %}
-	<div class="row">
+	<div class="row justify-content-center align-items-center">
 		<h2>Isbn: </h2>
 		<p class="book-heading"> {{ book_isbn }} </p>
 	</div>
-	<div class="row">
+	<div class="row justify-content-center align-items-center">
 		<h2>Title: </h2>
 		<p class="book-heading"> {{ title }} </p>
 	</div>
-	<div class="row">
+	<div class="row justify-content-center align-items-center">
 		<h2>Author: </h2>
 		<p class="book-heading"> {{ author }} </p>
 	</div>
-	<div class="row">
+	<div class="row justify-content-center align-items-center">
 		<h2>Year: </h2>
 		<p class="book-heading"> {{ year }} </p>
 	</div>
-	<div class="row">
+	<div class="row justify-content-center align-items-center">
 		<h2>Review Count: </h2>
-		<p class="book-heading"> {{ review }} </p>
+		<p class="book-heading"> {{ review_count }} </p>
 	</div>
+	{% for reviewz in reviews %}
+		<div class="row justify-content-center align-items-center">
+			User {{ reviewz.poster }}: {{ reviewz.review}}
+		</div>
+	{% endfor %}
+	<div class="row review-form justify-content-center align-items-center">
+		<div class="form-group">
+			<form action="{{'/book' ~ '/'}}{{book_isbn}}" method="POST">
+				<div class="row">
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="rating" id="inlineRadio1" value="option1">
+						<label class="form-check-label" for="inlineRadio1">1</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="rating" id="inlineRadio2" value="option2">
+						<label class="form-check-label" for="inlineRadio2">2</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="rating" id="inlineRadio3" value="option3">
+						<label class="form-check-label" for="inlineRadio3">3</label>
+	<				</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="rating" id="inlineRadio2" value="option4">
+						<label class="form-check-label" for="inlineRadio2">4</label>
+					</div>
+					<div class="form-check form-check-inline">
+						<input class="form-check-input" type="radio" name="rating" id="inlineRadio3" value="option5">
+						<label class="form-check-label" for="inlineRadio3">5</label>
+					</div>
+				</div>
+			    <label for="review-form">User Review</l`bel>
+			    <textarea class="form-control" name="review" id="review-form" rows="5"></textarea>
+			    <button class="btn btn-primary" type="submit">Submit</button>
+			</form>
+		</div>
+	</div>
+
 {% endblock %}

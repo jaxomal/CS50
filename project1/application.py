@@ -21,14 +21,6 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-class Book:
-    def __init__(self, isbn, title, author, year):
-        self.isbn = isbn
-        self.title = title
-        self.author = author
-        self.year = year
-        self.reviewcount = 0
-
 @app.route("/")
 def index():
     if session.get("in"):
@@ -65,7 +57,7 @@ def login():
     if res.username != username or res.password != password:
         return render_template("error.html", message="Invalid password or username")
     session["in"] = True
-    session["id"] = id
+    session["username"] = username
     return index()
 
 @app.route("/register", methods=["POST"])
@@ -89,7 +81,7 @@ def register():
 def logout():
     """Log out of your account."""
     session["in"] = False
-    session["id"] = None
+    session["username"] = None
     return signin()
 
 @app.route("/search", methods=["GET", "POST"])
@@ -104,16 +96,33 @@ def search():
 
 @app.route("/book/<book_id>", methods=["GET", "POST"])
 def book(book_id):
-    res = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": book_id}).fetchone()
-    if (res is None):
-        return render_template("error.html", message="messed up")
-    currentBook = Book(res.isbn, res.title, res.author, res.year)
-    book_isbn = currentBook.isbn
-    title = currentBook.title
-    author = currentBook.author
-    year = currentBook.year
-    review = currentBook.reviewcount
-    return render_template("book.html", book_isbn=book_isbn, title=title, author=author, year=year, review=review)
+    if request.method == "GET":
+        res = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": book_id}).fetchone()
+        if (res is None):
+            return render_template("error.html", message="messed up")
+        book_isbn = res.isbn
+        title = res.title
+        author = res.author
+        year = res.year
+        review_count = res.review_count
+        all_reviews = reviews(book_id)
+        return render_template("book.html", book_isbn=book_isbn, title=title, author=author, year=year, review_count=review_count, reviews=all_reviews)
+    else:
+        rating = request.form.get("rating")
+        review = request.form.get("review")
+        poster = session.get("username")
+        db.execute("INSERT INTO REVIEWS (book_id, poster, review) VALUES (:book_id, :poster, :review)",
+            {"book_id": book_id, "poster": poster, "review": review})
+        review_count = int(db.execute("SELECT review_count FROM books WHERE isbn = :isbn", {"isbn": book_id}).fetchone().review_count) + 1
+        db.execute("UPDATE books SET review_count = :review_count WHERE isbn = :isbn", {"review_count" : review_count, "isbn": book_id})
+        db.commit()
+        return render_template("success.html", message="You have posted a review")
+
+
+def reviews(isbn):
+    res = db.execute("SELECT poster, review FROM reviews JOIN books ON book_id = books.isbn WHERE isbn = :isbn",
+        {"isbn": isbn})
+    return res;
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
