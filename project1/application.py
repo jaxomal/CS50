@@ -21,6 +21,13 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
+class Book:
+    def __init__(self, isbn, title, author, year):
+        self.isbn = isbn
+        self.title = title
+        self.author = author
+        self.year = year
+        self.reviewcount = 0
 
 @app.route("/")
 def index():
@@ -91,11 +98,22 @@ def search():
     search_res = request.form.get("search")
     like_res = "'%" + search_res + "%'"
     res = db.execute("SELECT * FROM books WHERE isbn LIKE " + like_res + " OR title LIKE" +  like_res + " OR author LIKE" + like_res)
+    if (res.rowcount == 0):
+        return render_template("error.html", message="messed up")
     return render_template("results.html", books=res)
 
-@app.route("/book/<string:isbn>")
-def book(isbn):
-    return;
+@app.route("/book/<book_id>", methods=["GET", "POST"])
+def book(book_id):
+    res = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": book_id}).fetchone()
+    if (res is None):
+        return render_template("error.html", message="messed up")
+    currentBook = Book(res.isbn, res.title, res.author, res.year)
+    book_isbn = currentBook.isbn
+    title = currentBook.title
+    author = currentBook.author
+    year = currentBook.year
+    review = currentBook.reviewcount
+    return render_template("book.html", book_isbn=book_isbn, title=title, author=author, year=year, review=review)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

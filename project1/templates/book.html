@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}
+	{{ book_isbn }}
+{% endblock %}
+
+{% block style %}
+       <link rel="stylesheet" href="{{ url_for('static', filename='css/book.css') }}">
+{% endblock %}
+
+{% block logout %}
+    <form action="{{ url_for('logout') }}" class="form-inline" method="GET">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
+    </form>
+{% endblock %}
+
+{% block body %}
+	<div class="row">
+		<h2>Isbn: </h2>
+		<p class="book-heading"> {{ book_isbn }} </p>
+	</div>
+	<div class="row">
+		<h2>Title: </h2>
+		<p class="book-heading"> {{ title }} </p>
+	</div>
+	<div class="row">
+		<h2>Author: </h2>
+		<p class="book-heading"> {{ author }} </p>
+	</div>
+	<div class="row">
+		<h2>Year: </h2>
+		<p class="book-heading"> {{ year }} </p>
+	</div>
+	<div class="row">
+		<h2>Review Count: </h2>
+		<p class="book-heading"> {{ review }} </p>
+	</div>
+{% endblock %}
