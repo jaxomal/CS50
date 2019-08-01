@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -16,6 +16,9 @@ if not os.getenv("DATABASE_URL"):
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+
+# Make sure flask doesnt sort keys
+app.config['JSON_SORT_KEYS'] = False
 
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
@@ -76,6 +79,20 @@ def register():
     id = int(db.execute("SELECT id FROM users WHERE username = :user", {"user": user}).fetchone().id)
     db.commit()
     return render_template("success.html", message="Your id is " + str(id))
+
+@app.route("/api/<isbn>")
+def api(isbn):
+    res = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+    year = int(float(res.year))
+    book = {
+        "title": res.title,
+        "author": res.author,
+        "year": year,
+        "isbn": res.isbn,
+        "review_count": res.review_count
+    }
+    return jsonify(book)
+
 
 @app.route("/logout", methods=["GET"])
 def logout():
