@@ -114,6 +114,7 @@ def search():
 @app.route("/book/<book_id>", methods=["GET", "POST"])
 def book(book_id):
     if request.method == "GET":
+        key = "lYDsuY4Cc7hxaeQD5YgYmQ"
         res = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": book_id}).fetchone()
         if (res is None):
             return render_template("error.html", message="messed up")
@@ -123,7 +124,14 @@ def book(book_id):
         year = res.year
         review_count = res.review_count
         all_reviews = reviews(book_id)
-        return render_template("book.html", book_isbn=book_isbn, title=title, author=author, year=year, review_count=review_count, reviews=all_reviews)
+        goodreads = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": book_id}).json()
+        print(goodreads)
+        # reviews count
+        goodreads_review_count = goodreads["books"][0]["reviews_count"]
+        # average rating
+        goodreads_average_rating = goodreads["books"][0]["average_rating"]
+        return render_template("book.html", book_isbn=book_isbn, title=title, author=author, year=year, review_count=review_count, reviews=all_reviews,
+            goodreads_review_count=goodreads_review_count, goodreads_average_rating=goodreads_average_rating)
     else:
         rating = request.form.get("rating")
         review = request.form.get("review")

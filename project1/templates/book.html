@@ -35,6 +35,14 @@
 		<h2>Review Count: </h2>
 		<p class="book-heading"> {{ review_count }} </p>
 	</div>
+	<div class="row justify-content-center align-items-center">
+		<h2>Goodreads Review Count: </h2>
+		<p class="book-heading"> {{ goodreads_review_count }} </p>
+	</div>
+	<div class="row justify-content-center align-items-center">
+		<h2>Goodreads Average Rating: </h2>
+		<p class="book-heading"> {{ goodreads_average_rating }} </p>
+	</div>
 	{% for reviewz in reviews %}
 		<div class="row justify-content-center align-items-center">
 			User {{ reviewz.poster }}: {{ reviewz.review}}

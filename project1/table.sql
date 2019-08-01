@@ -15,6 +15,6 @@ CREATE TABLE books (
 CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
     book_id VARCHAR REFERENCES books,
-    poster INTEGER REFERENCES users,
+    poster VARCHAR NOT NULL,
     review VARCHAR NOT NULL
 );
